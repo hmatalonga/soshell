@@ -1,0 +1,2 @@
+# soshell
+Simple bash shell
