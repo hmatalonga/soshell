@@ -1,6 +1,8 @@
 #include "shell.h"
 
-char prompt[100];
+char prompt[STRING_SIZE]; // prompt header output
+int pos_x;
+int pos_y;
 
 void *f(void *args)
 {
@@ -13,40 +15,57 @@ void *f(void *args)
 
 int main ()
 {
-    int len, numargs;
-    char buf[1024];		/* um comando */
-    char *args[64];		/* com um maximo de 64 argumentos */
+    int len;
+    int numargs;
+    char buf[1024]; // a command buffer
+    char *args[64]; // max of 64 arguments
 
-    strcpy (prompt, "SOSHELL: Introduza um comando : prompt>");
+    strcpy (prompt, "SOSHELL:$ ");
 
     while (1)
     {
-        printf ("%s", prompt);
+        fprintf (stdout, "%s", prompt);
 
-        if ( fgets(buf,1023,stdin) == NULL)
+        if (fgets(buf, 1023, stdin) == NULL)
         {
             printf ("\n");
             exit (0);
         }
+
         len = strlen(buf);
-        if ( 1==len ) continue;  // string is only a barra n
-        if ( buf[len-1] == '\n' ) buf[len-1] ='\0';
+        
+        if ( 1==len )
+            continue;   // string is only \n
+        if ( buf[len-1] == '\n' )
+            buf[len-1] = '\0';
 
-        numargs = parse (buf, args);	/* particiona a string em argumentos */
+        add_history(buf);
 
-        if (!builtin (args, numargs)) {            
-            execute (args, numargs);		/* executa o comando */
-        }
+        numargs = parse (buf, args);    // particiona a string em argumentos
+
+        if (!builtin (args, numargs))            
+            execute (args, numargs);    // executa o comando
     }
+
     return 0;
 }
 
 int builtin (char **args, int numargs)
 {
-    if (strcmp (args[0], "sair") == 0)
+    if (strcmp (args[0], "exit") == 0)
     {
         exit (0);
         return 1;
+    }
+    else if (strcmp (args[0], "help") == 0)
+    {
+        fprintf(stderr, "HELP\n");
+        return 1;
+    }
+    else if (strncmp(args[0], "!", 1) == 0) {
+
+
+
     }
     else if (strncmp (args[0], "PS1=", 4) == 0)
     {
@@ -76,7 +95,7 @@ int builtin (char **args, int numargs)
             int n, size = atoi(args[3]);
             void *buf = malloc(size);
 
-            while ((n = read(fdin, buf, BUFFSIZE)) > 0)
+            while ((n = read(fdin, buf, BUFF_SIZE)) > 0)
             {
                 if (write(fdout, buf, n) != n)
                     perror("Erro de escrita!\n");
@@ -152,16 +171,7 @@ int builtin (char **args, int numargs)
     else if (strcmp(args[0], "fnox") == 0) {
         fnox(args);
         return 1;
-    }    
-    /*
-    if (strcmp (args[0], "qualquercoisa") == 0)
-    {
-    funcinalidade
-    return 1;
     }
-
-    if ( strcmp(args[0],"socp")==0) { socp(..,..) open/creat/read/write ; return 1; }
-    */
 
     //devolver 0 indique que não há comnando embutido
 

@@ -29,8 +29,15 @@ void execute (char **args, int numargs)
 
     if (pid == 0)
     {
-        if (proc_redirection(args, numargs) == 1) exit(1);
-        
+        int i, size;
+
+        int *pipes = proc_pipelines(args, numargs, &size);
+
+        // split pipes
+
+        if (proc_redirection(args, numargs) == 1)
+            exit(1);
+
         execvp (*args, args);	/* NOTE: as versoes execv() e
         		 * execvp() de execl() sao uteis
         		 * quando */
@@ -41,7 +48,8 @@ void execute (char **args, int numargs)
     }				/* vector de strings que contem os
     			 * argumentos. O ultimo argument */
 
-    if (FG == code) while (wait (&status) != pid);
+    if (FG == code)
+        while (wait (&status) != pid);
     
     return;
 }

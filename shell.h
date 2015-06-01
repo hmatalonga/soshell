@@ -11,39 +11,49 @@
 #include <time.h>
 #include <sys/dir.h>
 #include <errno.h>
+#include <ncurses.h>
 
-typedef struct $
+
+/* constantes que podem tornar uteis*/ 
+  
+#define BG 0
+#define FG 1
+  
+#define BUFF_SIZE 512
+#define STRING_SIZE 100
+#define FILE_MODE 0666
+#define HIST_FILE ".soshell_history"
+#define HIST_SIZE 100
+
+
+typedef struct $ 
 {
-	int temp;
-	char msg[100];
+    int temp;
+    char msg[STRING_SIZE];
 } data;
-
-typedef struct
-{
-	char fonte[100], destino[100];
-	int blockSize;
+ 
+typedef struct 
+{  
+    char fonte[STRING_SIZE];
+    char destino[STRING_SIZE];
+    int blockSize;
 } arg_t;
 
-int parse(char *buf, char **args);
 
-void execute(char **args, int numargs);
+int parse (char *buf, char **args);
+
+void execute (char **args, int numargs);
 
 int builtin (char **args, int numargs);
 
-void bits(char *op1, char *op, char *op2);
+void bits (char *op1, char *op, char *op2);
 
-void *socpth(void *args);
-
-int proc_redirection(char **args, int numargs);
+void *socpth (void *args);
 
 int fx (char **args);
 
 int fnox (char **args);
 
-/* constantes que podem tornar uteis*/
+int proc_redirection (char **args, int numargs);
 
-#define BG 0
-#define FG 1
-
-#define BUFFSIZE 512
-#define FILE_MODE 0666
+int *proc_pipelines(char **args, int numargs, int *size);

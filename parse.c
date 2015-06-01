@@ -20,6 +20,7 @@ int parse (char *buf, char **args)
         while ((*buf != '\0') && (!isspace((unsigned char)*buf)))	/* salta sobre o argumento */
             buf++;
     }
+    
     *args = (char *) NULL;	/* o ultimo argumento e. NULL */
 
     return numargs;

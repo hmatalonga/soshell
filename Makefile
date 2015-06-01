@@ -6,13 +6,13 @@
 #
 #Variaveis: Compiler, compiler flags, libraries to link, name of of object files
 #
-CC=cc
+CC=gcc
 FLAGS=-c -Wall
-LIBS=-lm -lpthread
-OBS=main.o execute.o parse.o bits.o socpth.o redirection.o ls.o fx.o
+LIBS=-lm -lpthread -lncurses
+OBS=main.o execute.o parse.o bits.o socpth.o ls.o fx.o redirection.o pipelines.o history.o
  
 #Alvo por defeito é o primeiro 
-all :  soshell
+all : soshell
  
 main.o : shell.h main.c
 	$(CC) $(FLAGS) main.c
@@ -24,14 +24,17 @@ bits.o : shell.h bits.c
 	$(CC) $(FLAGS) bits.c
 socpth.o : shell.h socpth.c
 	$(CC) $(FLAGS) socpth.c	
-redirection.o : shell.h redirection.c
-	$(CC) $(FLAGS) redirection.c
 ls.o : shell.h ls.c
 	$(CC) $(FLAGS) ls.c
 fx.o : shell.h fx.c
-	$(CC) $(FLAGS) fx.c				
+	$(CC) $(FLAGS) fx.c
+redirection.o : shell.h redirection.c
+	$(CC) $(FLAGS) redirection.c
+pipelines.o : shell.h pipelines.c
+	$(CC) $(FLAGS) pipelines.c
+history.o : shell.h history.c
+	$(CC) $(FLAGS) history.c		
 soshell : $(OBS)
-	$(CC)  -o soshell $(OBS) $(LIBS)
+	$(CC) -o soshell $(OBS) $(LIBS)
 clean limpar:
 	rm -f soshell *.o
-	echo "Limpeza dos ficheiros exectuaveis, objectos e gedit tralha"

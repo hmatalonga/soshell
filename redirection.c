@@ -1,6 +1,7 @@
 #include "shell.h"
 
-int proc_redirection(char **args, int numargs) {
+int proc_redirection(char **args, int numargs)
+{
 	int fd;
 
 	if (numargs < 3) return 0;
