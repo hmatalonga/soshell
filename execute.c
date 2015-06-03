@@ -29,10 +29,6 @@ void execute (char **args, int numargs)
 
     if (pid == 0)
     {
-        int i, size;
-
-        int *pipes = proc_pipelines(args, numargs, &size);
-
         // split pipes
 
         if (proc_redirection(args, numargs) == 1)

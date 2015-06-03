@@ -57,3 +57,5 @@ int fnox (char **args);
 int proc_redirection (char **args, int numargs);
 
 int *proc_pipelines(char **args, int numargs, int *size);
+
+void get_history(char *args);

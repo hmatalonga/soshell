@@ -39,8 +39,6 @@ int main ()
         if ( buf[len-1] == '\n' )
             buf[len-1] = '\0';
 
-        add_history(buf);
-
         numargs = parse (buf, args);    // particiona a string em argumentos
 
         if (!builtin (args, numargs))            
@@ -62,10 +60,10 @@ int builtin (char **args, int numargs)
         fprintf(stderr, "HELP\n");
         return 1;
     }
-    else if (strncmp(args[0], "!", 1) == 0) {
-
-
-
+    else if (strncmp(args[0], "!", 1) == 0)
+    {
+        fprintf(stderr, "History\n");
+        return 1;
     }
     else if (strncmp (args[0], "PS1=", 4) == 0)
     {
