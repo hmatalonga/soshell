@@ -50,23 +50,30 @@ int main ()
 
 int builtin (char **args, int numargs)
 {
+
     if (strcmp (args[0], "exit") == 0)
     {
+        add_history(args, numargs);
         exit (0);
         return 1;
     }
     else if (strcmp (args[0], "help") == 0)
     {
+        add_history(args, numargs);
         fprintf(stderr, "HELP\n");
         return 1;
     }
     else if (strncmp(args[0], "!", 1) == 0)
     {
-        fprintf(stderr, "History\n");
+        char *buf = get_history(args[0]+1);
+
+        builtin(args, parse(buf, args));
+
         return 1;
     }
     else if (strncmp (args[0], "PS1=", 4) == 0)
     {
+        add_history(args, numargs);
         strcpy(prompt, args[0]+4);
         return 1;
     }
@@ -74,6 +81,8 @@ int builtin (char **args, int numargs)
     {
         char *userRaiz = getenv("HOME");
      
+        add_history(args, numargs);
+
         if (args[1] != NULL) {
             if (strcmp(args[1], "~") == 0)
                 chdir(userRaiz);
@@ -93,6 +102,8 @@ int builtin (char **args, int numargs)
             int n, size = atoi(args[3]);
             void *buf = malloc(size);
 
+            add_history(args, numargs);
+
             while ((n = read(fdin, buf, BUFF_SIZE)) > 0)
             {
                 if (write(fdout, buf, n) != n)
@@ -106,6 +117,7 @@ int builtin (char **args, int numargs)
     }
     else if (strcmp(args[0],"bits") == 0) {
         if (numargs == 4) {
+            add_history(args, numargs);
             bits(args[1], args[2], args[3]);
         }
         else
@@ -116,6 +128,7 @@ int builtin (char **args, int numargs)
         pthread_t t;
 
         if (numargs == 3) {
+            add_history(args, numargs);
             data *tmp = (data *) malloc(sizeof(data));
             tmp->temp = atoi(args[1]);
             strcpy(tmp->msg, args[2]);
@@ -132,6 +145,8 @@ int builtin (char **args, int numargs)
             arg_t *arguments = (arg_t *) malloc(sizeof(arg_t));
 
             if (arguments == NULL) return 1;
+
+            add_history(args, numargs);
 
             strcpy(arguments->fonte, args[1]);
             strcpy(arguments->destino, args[2]);
@@ -154,6 +169,7 @@ int builtin (char **args, int numargs)
             if ((dp = opendir(args[1])) == NULL)
                 fprintf(stderr, "Can’t open %s\n", args[1]);
             else {
+                add_history(args, numargs);
                 while ((dirp = readdir(dp)) != NULL)
                     printf("%s\n", dirp->d_name);
                 closedir(dp);
@@ -163,10 +179,12 @@ int builtin (char **args, int numargs)
         return 1;
     }
     else if (strcmp(args[0], "fx") == 0) {
+        add_history(args, numargs);
         fx(args);
         return 1;
     }
     else if (strcmp(args[0], "fnox") == 0) {
+        add_history(args, numargs);
         fnox(args);
         return 1;
     }

@@ -58,4 +58,6 @@ int proc_redirection (char **args, int numargs);
 
 int *proc_pipelines(char **args, int numargs, int *size);
 
-void get_history(char *args);
+void add_history(char **args, int numargs);
+
+char *get_history(char *args);

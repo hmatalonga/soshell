@@ -34,6 +34,8 @@ void execute (char **args, int numargs)
         if (proc_redirection(args, numargs) == 1)
             exit(1);
 
+        add_history(args, numargs);
+
         execvp (*args, args);	/* NOTE: as versoes execv() e
         		 * execvp() de execl() sao uteis
         		 * quando */
