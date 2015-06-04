@@ -39,6 +39,12 @@ typedef struct
     int blockSize;
 } arg_t;
 
+typedef struct container
+{
+    char value[BUFF_SIZE];
+    struct container *next;    
+} mystack;
+
 
 int parse (char *buf, char **args);
 
@@ -53,6 +59,10 @@ void *socpth (void *args);
 int fx (char **args);
 
 int fnox (char **args);
+
+mystack *append(mystack *head, char value[]);
+
+mystack *push(mystack *head, char value[]);
 
 int proc_redirection (char **args, int numargs);
 

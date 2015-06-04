@@ -1,9 +1,10 @@
 #include "shell.h"
 
-char *get_last_cmd()
+mystack *read_history()
 {
     FILE *fp = fopen(HIST_FILE, "r");
     char buf[BUFF_SIZE];
+    mystack *s = NULL;
 
     if (fp == NULL)
     {
@@ -11,55 +12,110 @@ char *get_last_cmd()
         return NULL;
     }
 
-    while (!feof(fp))
-        fscanf(fp, "%s\n", buf);
+    while (fgets(buf, BUFF_SIZE, fp) != NULL)
+        s = append(s, buf);
 
     fclose(fp);
-    fprintf(stderr, "%s\n", buf);
+    return s;
+}
 
-    return buf;
+char *get_last_cmd()
+{
+    mystack *s = read_history(), *r = NULL;
+
+    while (s != NULL)
+    {
+        r = push(r, s->value);
+        s = s->next;
+    }
+
+    if (r != NULL)
+    {
+        fprintf(stderr, "%s", r->value);
+        return r->value;
+    }
+
+    return NULL;
 }
 
 char *get_nth_cmd(int index)
 {
-    FILE *fp = fopen(HIST_FILE, "r");
-    char buf[BUFF_SIZE];
-    int i = index, aux = 0;
+    mystack *s = read_history(), *r = NULL;
+    int i = index;
 
-    if (fp == NULL)
+    while (s != NULL)
     {
-        fprintf(stderr, "No history file found\n");
-        return NULL;
+        r = push(r, s->value);
+        s = s->next;
     }
 
     if (i > 0) // forward history
     {
-        while (i-- && !feof(fp))
-            fscanf(fp, "%s\n", buf);        
+        i--;
+        while (s != NULL && i > 0)
+        {
+            i--;
+            s = s->next;
+        }    
     }
     else // backwards history
     {
-        while (!feof(fp)) // get the number of lines in the history file
+        i++;
+        while (r != NULL && i < 0)
         {
-            fscanf(fp, "%s\n", buf);
-            aux++;
-        }
-        
-        rewind(fp);
-        i = aux + index;
-
-        while (i-- && !feof(fp))
-            fscanf(fp, "%s\n", buf);    
+            i++;
+            r = r->next;
+        }         
     }
 
-    fclose(fp);
-
-    if (i == 0)
-        fprintf(stderr, "%s\n", buf);
+    if (index > 0)
+    {
+        if (s != NULL && i == 0)
+        {
+            fprintf(stderr, "%s", s->value);
+            return s->value;
+        }
+    }
     else
-        fprintf(stderr, "Invalid command index\n");
+    {
+        if (r != NULL && i == 0)
+        {
+            fprintf(stderr, "%s", r->value);
+            return r->value;
+        }
+    }
 
-    return buf;
+    return NULL;
+}
+
+char *get_exp_cmd(char *match)
+{
+    mystack *s = read_history(), *r = NULL;
+    int found = 0;
+
+    while (s != NULL)
+    {
+        r = push(r, s->value);
+        s = s->next;
+    }
+
+    while (r != NULL)
+    {
+        if (strstr(r->value, match) != NULL)
+        {
+            found = 1;
+            break;
+        }
+        r = r->next;
+    }
+
+    if (found)
+    {
+        fprintf(stderr, "%s", r->value);
+        return r->value;
+    }
+    
+    return NULL;
 }
 
 void add_history(char **args, int numargs)
@@ -82,6 +138,7 @@ void add_history(char **args, int numargs)
 char *get_history(char *args)
 {
     int i;
+    char s1[BUFF_SIZE], s2[BUFF_SIZE];
 
     if (strcmp(args, "!") == 0)
         return get_last_cmd();
@@ -89,6 +146,8 @@ char *get_history(char *args)
         return get_nth_cmd(i);
     else if (sscanf(args, "-%d", &i) == 1)
         return get_nth_cmd(-1*i);
+    else if (sscanf(args, "%s", &s1) == 1)
+        return get_exp_cmd(s1);
     else
     {
         fprintf(stderr, "Invalid format\n");

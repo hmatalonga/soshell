@@ -43,6 +43,7 @@ int main ()
 
         if (!builtin (args, numargs))            
             execute (args, numargs);    // executa o comando
+
     }
 
     return 0;
@@ -65,10 +66,8 @@ int builtin (char **args, int numargs)
     }
     else if (strncmp(args[0], "!", 1) == 0)
     {
-        char *buf = get_history(args[0]+1);
-
-        builtin(args, parse(buf, args));
-
+        get_history(args[0]+1);
+        
         return 1;
     }
     else if (strncmp (args[0], "PS1=", 4) == 0)
@@ -80,7 +79,7 @@ int builtin (char **args, int numargs)
     else if (strcmp (args[0], "cd") == 0)
     {
         char *userRaiz = getenv("HOME");
-     
+
         add_history(args, numargs);
 
         if (args[1] != NULL) {
@@ -97,12 +96,12 @@ int builtin (char **args, int numargs)
     else if (strcmp(args[0],"socp") == 0)
     {
         if (numargs == 3) {
+            add_history(args, numargs);
+
             int fdin = open(args[1], FILE_MODE);
             int fdout = creat(args[2], FILE_MODE);
             int n, size = atoi(args[3]);
             void *buf = malloc(size);
-
-            add_history(args, numargs);
 
             while ((n = read(fdin, buf, BUFF_SIZE)) > 0)
             {
@@ -116,7 +115,8 @@ int builtin (char **args, int numargs)
         return 1;
     }
     else if (strcmp(args[0],"bits") == 0) {
-        if (numargs == 4) {
+        if (numargs == 4)
+        {
             add_history(args, numargs);
             bits(args[1], args[2], args[3]);
         }
@@ -127,7 +127,8 @@ int builtin (char **args, int numargs)
     else if (strcmp(args[0], "alarm") == 0) {
         pthread_t t;
 
-        if (numargs == 3) {
+        if (numargs == 3)
+        {
             add_history(args, numargs);
             data *tmp = (data *) malloc(sizeof(data));
             tmp->temp = atoi(args[1]);
@@ -141,12 +142,12 @@ int builtin (char **args, int numargs)
     else if (strcmp(args[0], "socpth") == 0) {
         pthread_t th;
 
-        if (numargs == 4) {
+        if (numargs == 4)
+        {
+            add_history(args, numargs);
             arg_t *arguments = (arg_t *) malloc(sizeof(arg_t));
 
             if (arguments == NULL) return 1;
-
-            add_history(args, numargs);
 
             strcpy(arguments->fonte, args[1]);
             strcpy(arguments->destino, args[2]);

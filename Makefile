@@ -9,7 +9,7 @@
 CC=gcc
 FLAGS=-c -Wall
 LIBS=-lm -lpthread -lncurses
-OBS=main.o execute.o parse.o bits.o socpth.o ls.o fx.o redirection.o pipelines.o history.o
+OBS=main.o execute.o parse.o bits.o socpth.o ls.o fx.o redirection.o pipelines.o history.o stack.o
  
 #Alvo por defeito é o primeiro 
 all : soshell
@@ -33,7 +33,9 @@ redirection.o : shell.h redirection.c
 pipelines.o : shell.h pipelines.c
 	$(CC) $(FLAGS) pipelines.c
 history.o : shell.h history.c
-	$(CC) $(FLAGS) history.c		
+	$(CC) $(FLAGS) history.c
+stack.o : shell.h stack.c
+	$(CC) $(FLAGS) stack.c
 soshell : $(OBS)
 	$(CC) -o soshell $(OBS) $(LIBS)
 clean limpar:
