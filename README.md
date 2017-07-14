@@ -1,2 +1,3 @@
 # soshell
-Simple bash shell
+
+Simple bash shell. Developed for learning purposes at university.
